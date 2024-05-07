@@ -1,7 +1,7 @@
 
 class Calculator {
     constructor() {
-  
+      
       this.result = document.querySelector('.calculator-screen-two');
       this.subRes = document.querySelector('.calculator-screen-one');
       this.numbers = [...document.querySelectorAll('[data-number]')];
@@ -35,7 +35,8 @@ class Calculator {
     }
   
     addOption = (e) => {
-      
+      var memoryHistory = [];
+
       this.option = e.target.dataset.option;
       this.lastChar = this.result.value[this.result.value.length - 1];
       
@@ -56,6 +57,18 @@ class Calculator {
         (this.result.value.length === 1) 
           ? this.result.value = '0' 
           : this.result.value = this.result.value.substring(0, this.result.value.length - 1);
+      }
+
+      else if (this.option === 'memoryPlus') {
+        var currentValue = parseFloat(this.result.value);
+        if (!isNaN(currentValue)) {
+          memoryValue += currentValue;
+          memoryHistory.push(currentValue); // Lưu giá trị vào lịch sử bộ nhớ
+        }
+      }
+
+      else if (this.option === 'memoryHistory') {
+        console.log(memoryHistory); // Hiển thị lịch sử bộ nhớ trong console.log
       }
     }
   
