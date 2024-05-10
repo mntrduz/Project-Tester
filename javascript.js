@@ -17,6 +17,8 @@ class Calculator {
       this.reset = false;
       this.lastOperator = null;
       this.currentResult = 0;
+      this.memoryValue = 0;
+      this.memoryHistory = [];
       
       this.clear();
     }
@@ -66,6 +68,32 @@ class Calculator {
           memoryHistory.push(currentValue); // Lưu giá trị vào lịch sử bộ nhớ
         }
       }
+
+      else if (this.option === 'memoryRecall') {
+        this.result.value = this.memoryValue;
+      }
+
+      else if (this.option === 'memoryMinus') {
+        var currentValue = parseFloat(this.result.value);
+        if (!isNaN(currentValue)) {
+          this.memoryValue -= currentValue;
+          this.memoryHistory.push(-currentValue); // Lưu giá trị vào lịch sử bộ nhớ
+        }
+      }
+
+      else if (this.option === 'memorySave') {
+        var currentValue = parseFloat(this.result.value);
+        if (!isNaN(currentValue)) {
+          this.memoryValue = currentValue;
+          this.memoryHistory.push(currentValue); // Lưu giá trị vào lịch sử bộ nhớ
+        }
+      }
+
+      else if (this.option === 'memoryClear') {
+        this.memoryValue = 0;
+        this.memoryHistory = [];
+      }
+
 
       else if (this.option === 'memoryHistory') {
         console.log(memoryHistory); // Hiển thị lịch sử bộ nhớ trong console.log
@@ -188,4 +216,3 @@ class Calculations {
   document.addEventListener('DOMContentLoaded', () => {
     new Calculator();
   })
-
