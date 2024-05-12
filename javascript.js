@@ -1,104 +1,101 @@
 
 class Calculator {
-    constructor() {
-      
-      this.result = document.querySelector('.calculator-screen-two');
-      this.subRes = document.querySelector('.calculator-screen-one');
-      this.numbers = [...document.querySelectorAll('[data-number]')];
-      this.options = [...document.querySelectorAll('[data-option]')];
-      this.operators = [...document.querySelectorAll('[data-operator]')];
-      
-      this.numbers.forEach(number => number.addEventListener('click', this.addNumber));
-      this.options.forEach(option => option.addEventListener('click', this.addOption));
-      this.operators.forEach(operator => operator.addEventListener('click', this.calculate));
-      
-      this.calculations = [];
-      this.newNumber = false;
-      this.reset = false;
-      this.lastOperator = null;
-      this.currentResult = 0;
+  constructor() {
+    
+    this.result = document.querySelector('.calculator-screen-two');
+    this.subRes = document.querySelector('.calculator-screen-one');
+    this.numbers = [...document.querySelectorAll('[data-number]')];
+    this.options = [...document.querySelectorAll('[data-option]')];
+    this.operators = [...document.querySelectorAll('[data-operator]')];
+    
+    this.numbers.forEach(number => number.addEventListener('click', this.addNumber));
+    this.options.forEach(option => option.addEventListener('click', this.addOption));
+    this.operators.forEach(operator => operator.addEventListener('click', this.calculate));
+    
+    this.calculations = [];
+    this.newNumber = false;
+    this.reset = false;
+    this.lastOperator = null;
+    this.currentResult = 0;
+    this.memoryValue = 0;
+    this.memoryHistory = [];
+    
+    this.clear();
+  }
+
+  addNumber = (e) => {
+
+    if(this.reset) this.clear();
+    
+    this.number = e.target.textContent;
+
+    if(this.result.value === '0') this.result.value = this.number;
+    else if(this.newNumber) this.result.value = this.number;
+    else this.result.value += this.number;
+
+    this.newNumber = false;
+  }
+
+  addOption = (e) => {
+    this.option = e.target.dataset.option;
+    this.lastChar = this.result.value[this.result.value.length - 1];
+    
+    if(this.option === 'dot') {
+      (this.lastChar === '.' || this.result.value.indexOf('.') !== -1) 
+        ? this.result.value
+        : this.result.value += '.';
+    }
+    
+    else if(this.option === 'clearEntry') this.result.value = '0';
+    
+    else if(this.option === 'clear') this.clear();
+    
+    else if(this.option === 'reverse') this.result.value = this.result.value * -1;
+
+    else if(this.option === 'undo') {
+
+      (this.result.value.length === 1) 
+        ? this.result.value = '0' 
+        : this.result.value = this.result.value.substring(0, this.result.value.length - 1);
+    }
+
+    else if (this.option === 'memoryPlus') {
+      var currentValue = parseFloat(this.result.value);
+      if (!isNaN(currentValue)) {
+        this.memoryValue += currentValue;
+        this.memoryHistory.push(currentValue); // Lưu giá trị vào lịch sử bộ nhớ
+      }
+    }
+
+    else if (this.option === 'memoryRecall') {
+      this.result.value = this.memoryValue;
+    }
+
+    else if (this.option === 'memoryMinus') {
+      var currentValue = parseFloat(this.result.value);
+      if (!isNaN(currentValue)) {
+        this.memoryValue -= currentValue;
+        this.memoryHistory.push(-currentValue); // Lưu giá trị vào lịch sử bộ nhớ
+      }
+    }
+
+    else if (this.option === 'memorySave') {
+      var currentValue = parseFloat(this.result.value);
+      if (!isNaN(currentValue)) {
+        this.memoryValue = currentValue;
+        this.memoryHistory.push(currentValue); // Lưu giá trị vào lịch sử bộ nhớ
+      }
+    }
+
+    else if (this.option === 'memoryClear') {
       this.memoryValue = 0;
       this.memoryHistory = [];
-      
-      this.clear();
     }
-  
-    addNumber = (e) => {
-  
-      if(this.reset) this.clear();
-      
-      this.number = e.target.textContent;
-  
-      if(this.result.value === '0') this.result.value = this.number;
-      else if(this.newNumber) this.result.value = this.number;
-      else this.result.value += this.number;
-  
-      this.newNumber = false;
+
+    else if (this.option === 'memoryHistory') {
+      console.log(this.memoryHistory); // Hiển thị lịch sử bộ nhớ trong console.log
     }
-  
-    addOption = (e) => {
-      var memoryHistory = [];
-
-      this.option = e.target.dataset.option;
-      this.lastChar = this.result.value[this.result.value.length - 1];
-      
-      if(this.option === 'dot') {
-        (this.lastChar === '.' || this.result.value.indexOf('.') !== -1) 
-          ? this.result.value
-          : this.result.value += '.';
-      }
-      
-      else if(this.option === 'clearEntry') this.result.value = '0';
-      
-      else if(this.option === 'clear') this.clear();
-      
-      else if(this.option === 'reverse') this.result.value = this.result.value * -1;
-  
-      else if(this.option === 'undo') {
-  
-        (this.result.value.length === 1) 
-          ? this.result.value = '0' 
-          : this.result.value = this.result.value.substring(0, this.result.value.length - 1);
-      }
-
-      else if (this.option === 'memoryPlus') {
-        var currentValue = parseFloat(this.result.value);
-        if (!isNaN(currentValue)) {
-          memoryValue += currentValue;
-          memoryHistory.push(currentValue); // Lưu giá trị vào lịch sử bộ nhớ
-        }
-      }
-
-      else if (this.option === 'memoryRecall') {
-        this.result.value = this.memoryValue;
-      }
-
-      else if (this.option === 'memoryMinus') {
-        var currentValue = parseFloat(this.result.value);
-        if (!isNaN(currentValue)) {
-          this.memoryValue -= currentValue;
-          this.memoryHistory.push(-currentValue); // Lưu giá trị vào lịch sử bộ nhớ
-        }
-      }
-
-      else if (this.option === 'memorySave') {
-        var currentValue = parseFloat(this.result.value);
-        if (!isNaN(currentValue)) {
-          this.memoryValue = currentValue;
-          this.memoryHistory.push(currentValue); // Lưu giá trị vào lịch sử bộ nhớ
-        }
-      }
-
-      else if (this.option === 'memoryClear') {
-        this.memoryValue = 0;
-        this.memoryHistory = [];
-      }
-
-
-      else if (this.option === 'memoryHistory') {
-        console.log(memoryHistory); // Hiển thị lịch sử bộ nhớ trong console.log
-      }
-    }
+  }
   
     calculate = (e) => {
   
